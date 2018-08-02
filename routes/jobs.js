@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
+const auth = require("../middleware/auth");
 
-const User = require("../models/user");
+const { User } = require("../models/user");
 const Job = require("../models/job");
 
-router.get("/", (req, res) => {
-  User.findById(req.user)
+router.get("/", auth, (req, res) => {
+  User.findById(req.user._id)
     .populate({
       path: "jobs"
     })
@@ -20,7 +21,7 @@ router.get("/", (req, res) => {
     });
 });
 
-router.post("/", jsonParser, (req, res) => {
+router.post("/", auth, jsonParser, (req, res) => {
   const requiredJobFields = ["jobName"];
 
   for (let field of requiredJobFields) {
@@ -31,7 +32,7 @@ router.post("/", jsonParser, (req, res) => {
   }
 
   User.findById(req.user._id).then(user => {
-    return Job.Create({
+    return Job.create({
       jobName: req.body.jobName,
       vinNumber: req.body.vinNumber,
       startDate: new Date(),

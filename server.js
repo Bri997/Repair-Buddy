@@ -5,14 +5,14 @@ const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 const jobsRouter = require("./routes/jobs");
 const userRouter = require("./routes/users");
-
+const tagsRouter = require("./routes/tags");
 const app = express();
 app.use(express.static("Public"));
 app.use(jsonParser);
 
 app.use("/users", userRouter);
 app.use("/jobs", jobsRouter);
-
+app.use("/tags", tagsRouter);
 // make upload folder available
 app.use("/uploads", express.static("uploads"));
 
