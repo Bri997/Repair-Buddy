@@ -1,6 +1,10 @@
-const mongoose = reuqire("mongoose");
+const mongoose = require("mongoose");
 
-const jobSchema = new mongoose.jobSchema({
+const jobSchema = new mongoose.Schema({
+  jobName: {
+    type: String,
+    required: true
+  },
   vinNumber: {
     type: String,
     required: true

@@ -3,10 +3,16 @@ const { PORT, DATABASE_URL } = require("./config");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
+const jobsRouter = require("./routes/jobs");
+const userRouter = require("./routes/users");
 
 const app = express();
 app.use(express.static("Public"));
 app.use(jsonParser);
+
+app.use("/users", userRouter);
+app.use("/jobs", jobsRouter);
+
 // make upload folder available
 app.use("/uploads", express.static("uploads"));
 
@@ -39,7 +45,7 @@ function runServer(databaseUrl, port = PORT) {
 function closeServer() {
   return mongoose.disconnect().then(() => {
     return new Promise((resolve, reject) => {
-      console.log("Closing your fav server");
+      console.log("Closing your favorite server");
       server.close(err => {
         if (err) {
           return reject(err);
