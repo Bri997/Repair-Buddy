@@ -91,5 +91,16 @@ router.put("/:id", jsonParser, auth, (req, res) => {
       res.status(500).sjon({ message: "server Error" });
     });
 });
+router.delete("/:id", auth, (req, res) => {
+  Job.findByIdAndRemove(req.params.id)
+    .then(job => res.status(204).json({ message: "Job Deleted" }))
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Serve Error" });
+    });
+});
 
+router.use("*", (req, res) => {
+  res.status(404).json({ message: "404 Whoops not found try again" });
+});
 module.exports = router;
