@@ -21,6 +21,20 @@ router.get("/", auth, (req, res) => {
     });
 });
 
+router.get("/:id", auth, (req, res) => {
+  User.findById(req.user._id)
+    .populate({
+      path: "jobs"
+    })
+    .then(user => {
+      res.json(user.jobs);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(" 500 error");
+    });
+});
+
 router.post("/", auth, jsonParser, (req, res) => {
   const requiredJobFields = ["jobName"];
 
@@ -52,6 +66,30 @@ router.post("/", auth, jsonParser, (req, res) => {
         res.status(500).json({ message: "Server Error" });
       });
   });
+});
+
+router.put("/:id", jsonParser, auth, (req, res) => {
+  if (!(req.params.id && req.body._id && req.params.id === req.body._id)) {
+    const message =
+      `Request path id (${req.params.id}) and request body id ` +
+      `(${req.body.id}) must match`;
+    console.error(message);
+    return res.status(400).json({ message: message });
+  }
+  const toBeUpadted = {};
+  const updateableFields = ["description"];
+
+  updateableFields.forEach(field => {
+    if (field in req.body) {
+      toBeUpadted[field] = req.body[field];
+    }
+  });
+
+  Job.findByIdAndUpdate(req.params.id, { $set: toBeUpadted })
+    .then(job => res.status(204).json({ message: "Success" }))
+    .catch(err => {
+      res.status(500).sjon({ message: "server Error" });
+    });
 });
 
 module.exports = router;

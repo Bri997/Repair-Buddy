@@ -10,6 +10,9 @@ const imageSchema = new mongoose.imageSchema({
     type: Date,
     required: true
   },
+  imgDescription: {
+    type: String
+  },
   tag: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }]
 });
 
