@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const mongoose = require("mongoose");
 
-const imageSchema = new mongoose.imageSchema({
+const imageSchema = new mongoose.Schema({
   url: {
     type: String,
     required: true
@@ -16,6 +16,8 @@ const imageSchema = new mongoose.imageSchema({
   tag: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }]
 });
 
-const Image = mongoose.model("Image", imageSchema);
-
+const Image = mongoose.model("Image", imageSchema, "Image");
+console.log("Image is here");
 module.exports = Image;
+
+//http://localhost:8080/user/id/job/id/images/idIMG

@@ -26,6 +26,8 @@ const userSchema = new mongoose.Schema({
   },
   jobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
 
+  images: [{ type: mongoose.Schema.Types.ObjectId, ref: "Image" }],
+
   tags: [{ type: mongoose.Schema.Types.ObjectId, ref: "Tag" }]
 });
 
@@ -35,7 +37,7 @@ userSchema.methods.generateAuthToken = function() {
 };
 
 const User = mongoose.model("User", userSchema);
-
+console.log("User is here");
 function validateUser(user) {
   const schema = {
     name: Joi.string()

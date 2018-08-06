@@ -6,7 +6,7 @@ const auth = require("../middleware/auth");
 
 const { User } = require("../models/user");
 const Job = require("../models/job");
-
+const Image = require("../models/image");
 router.get("/", auth, (req, res) => {
   User.findById(req.user._id)
     .populate({
@@ -22,12 +22,10 @@ router.get("/", auth, (req, res) => {
 });
 
 router.get("/:id", auth, (req, res) => {
-  User.findById(req.user._id)
-    .populate({
-      path: "jobs"
-    })
-    .then(user => {
-      res.json(user.jobs);
+  Job.findById(req.params.id)
+
+    .then(job => {
+      res.json(job);
     })
     .catch(err => {
       console.log(err);
@@ -64,6 +62,28 @@ router.post("/", auth, jsonParser, (req, res) => {
       .catch(err => {
         console.log(err);
         res.status(500).json({ message: "Server Error" });
+      });
+  });
+});
+
+router.post("/:id/image", auth, jsonParser, (req, res) => {
+  Job.findById(req.params.id).then(job => {
+    return Image.create({
+      url: req.body.url,
+      date: new Date(),
+      imgDescription: req.body.imgDescription,
+      tag: []
+    })
+      .then(image => {
+        job.image.push(image._id);
+        return job.save().then(job => {
+          return image.save();
+        });
+      })
+      .then(image => res.status(201).json(image))
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({ message: "Post image problem", err: err });
       });
   });
 });

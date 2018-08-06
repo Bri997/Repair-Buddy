@@ -11,9 +11,9 @@ const app = express();
 app.use(express.static("Public"));
 app.use(jsonParser);
 
-app.use("/users", userRouter);
-app.use("/jobs", jobsRouter);
-app.use("/images", imageRouter);
+app.use("/user", userRouter);
+app.use("/job", jobsRouter);
+app.use("/image", imageRouter);
 app.use("/tags", tagsRouter);
 // make upload folder available
 app.use("/uploads", express.static("uploads"));
