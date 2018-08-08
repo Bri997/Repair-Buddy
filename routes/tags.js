@@ -4,15 +4,16 @@ const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 const auth = require("../middleware/auth");
 const { User } = require("../models/user");
+const Image = require("../models/image");
 const Tag = require("../models/tag");
 
 router.get("/", auth, (req, res) => {
-  User.findById(req.user._id)
+  Tag.findById(req.tag.id)
     .populate({
-      path: "tags"
+      path: "tag"
     })
-    .then(user => {
-      res.json(user.tags);
+    .then(tag => {
+      res.json(tag);
     })
     .catch(err => {
       console.log(err);

@@ -7,6 +7,8 @@ const auth = require("../middleware/auth");
 const { User } = require("../models/user");
 const Job = require("../models/job");
 const Image = require("../models/image");
+const { upload } = require("../routes/images");
+
 router.get("/", auth, (req, res) => {
   User.findById(req.user._id)
     .populate({
@@ -66,27 +68,33 @@ router.post("/", auth, jsonParser, (req, res) => {
   });
 });
 
-router.post("/:id/image", auth, jsonParser, (req, res) => {
-  Job.findById(req.params.id).then(job => {
-    return Image.create({
-      url: req.body.url,
-      date: new Date(),
-      imgDescription: req.body.imgDescription,
-      tag: []
-    })
-      .then(image => {
-        job.image.push(image._id);
-        return job.save().then(job => {
-          return image.save();
-        });
+router.post(
+  "/:id/image",
+  upload.single("userImage"),
+  auth,
+  jsonParser,
+  (req, res) => {
+    Job.findById(req.params.id).then(job => {
+      return Image.create({
+        url: req.file.path,
+        date: new Date(),
+        imgDescription: req.body.imgDescription,
+        tag: []
       })
-      .then(image => res.status(201).json(image))
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({ message: "Post image problem", err: err });
-      });
-  });
-});
+        .then(image => {
+          job.images.push(image._id);
+          return job.save().then(job => {
+            return image;
+          });
+        })
+        .then(image => res.status(201).json(image))
+        .catch(err => {
+          console.log(err);
+          res.status(500).json({ message: "Post image problem", err: err });
+        });
+    });
+  }
+);
 
 router.put("/:id", jsonParser, auth, (req, res) => {
   if (!(req.params.id && req.body._id && req.params.id === req.body._id)) {

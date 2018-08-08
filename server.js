@@ -5,18 +5,41 @@ const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 const userRouter = require("./routes/users");
 const jobsRouter = require("./routes/jobs");
-const imageRouter = require("./routes/images");
+const { router: imageRouter } = require("./routes/images");
 const tagsRouter = require("./routes/tags");
 const app = express();
 app.use(express.static("Public"));
 app.use(jsonParser);
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin", "Authorization");
+  if (req.method === "Option") {
+    res.header("Access-Control-Allow-Method", "Put", "Post", "Delete", "Get");
+    return res.status(200).json({});
+  }
+  next();
+});
+
 app.use("/user", userRouter);
 app.use("/job", jobsRouter);
 app.use("/image", imageRouter);
-app.use("/tags", tagsRouter);
+app.use("/tag", tagsRouter);
 // make upload folder available
-app.use("/uploads", express.static("uploads"));
+app.use("./uploads", express.static("newuploads"));
+// app.use((req, res, next) => {
+//   const error = new Error("Not Found");
+//   error.status = 404;
+//   next(error);
+// });
+// app.use((error, req, res, next) => {
+//   res.status(err.status || 500);
+//   res.json({
+//     error: {
+//       message: error.message
+//     }
+//   });
+// });
 
 mongoose.Promise = global.Promise;
 
@@ -63,3 +86,9 @@ if (require.main === module) {
 }
 
 module.exports = { app, runServer, closeServer };
+
+// mywebsite.com/jobs/01938409123809/img/019283102938
+
+//job/img
+//jobs/ all trucks
+//jobs/img/10933841
