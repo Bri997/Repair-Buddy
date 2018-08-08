@@ -37,7 +37,7 @@ const Image = require("../models/image");
 const Tag = require("../models/tag");
 
 router.get("/", auth, (req, res) => {
-  Image.findById(req.params.id)
+  Image.find()
 
     .then(image => {
       res.json(image);

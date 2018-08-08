@@ -8,12 +8,22 @@ const { User } = require("../models/user");
 const Job = require("../models/job");
 const Image = require("../models/image");
 const { upload } = require("../routes/images");
+const Tag = require("../models/tag");
 
 router.get("/", auth, (req, res) => {
   User.findById(req.user._id)
     .populate({
-      path: "jobs"
+      path: "jobs",
+      populate: [
+        {
+          path: "images"
+        },
+        {
+          path: "tags"
+        }
+      ]
     })
+
     .then(user => {
       res.json(user.jobs);
     })
@@ -25,7 +35,12 @@ router.get("/", auth, (req, res) => {
 
 router.get("/:id", auth, (req, res) => {
   Job.findById(req.params.id)
-
+    .populate({
+      path: "images"
+    })
+    .populate({
+      path: "tags"
+    })
     .then(job => {
       res.json(job);
     })
@@ -128,7 +143,29 @@ router.delete("/:id", auth, (req, res) => {
     });
 });
 
+router.post("/:id/tag", auth, (req, res) => {
+  Job.findById(req.params.id).then(job => {
+    return Tag.create({
+      tag: req.body.tag
+    })
+      .then(tag => {
+        job.tags.push(tag._id);
+        return job.save().then(job => {
+          return tag;
+        });
+      })
+      .then(tag => res.status(201).json(tag))
+      .catch(err => {
+        console.log(err);
+        res.status(500).json({ message: "Job Tag post problem", err: err });
+      });
+  });
+});
+
 router.use("*", (req, res) => {
   res.status(404).json({ message: "404 Whoops not found try again" });
 });
 module.exports = router;
+
+//wireframe the front end. Adobe XD
+//finish crudy stuff

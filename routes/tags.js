@@ -8,10 +8,8 @@ const Image = require("../models/image");
 const Tag = require("../models/tag");
 
 router.get("/", auth, (req, res) => {
-  Tag.findById(req.tag.id)
-    .populate({
-      path: "tag"
-    })
+  Tag.find()
+
     .then(tag => {
       res.json(tag);
     })
@@ -21,32 +19,32 @@ router.get("/", auth, (req, res) => {
     });
 });
 
-router.post("/", auth, jsonParser, (req, res) => {
-  const requireTagField = ["tag"];
+// router.post("/", auth, jsonParser, (req, res) => {
+//   const requireTagField = ["tag"];
 
-  for (let field of requireTagField) {
-    if (!(field in req.body)) {
-      const message = "Must enter a tag";
-      return res.status(400).send(message);
-    }
-  }
-  User.findById(req.user._id).then(user => {
-    return Tag.create({
-      tag: req.body.tag
-    })
-      .then(tag => {
-        tag.user = user._id;
-        user.tags.push(tag._id);
-        return user.save().then(user => {
-          return tag.save();
-        });
-      })
-      .then(tag => res.status(201).json(tag))
-      .catch(err => {
-        console.log(err);
-        res.status(500).json({ message: "Server Error" });
-      });
-  });
-});
+//   for (let field of requireTagField) {
+//     if (!(field in req.body)) {
+//       const message = "Must enter a tag";
+//       return res.status(400).send(message);
+//     }
+//   }
+//   User.findById(req.user._id).then(user => {
+//     return Tag.create({
+//       tag: req.body.tag
+//     })
+//       .then(tag => {
+//         tag.user = user._id;
+//         user.tags.push(tag._id);
+//         return user.save().then(user => {
+//           return tag.save();
+//         });
+//       })
+//       .then(tag => res.status(201).json(tag))
+//       .catch(err => {
+//         console.log(err);
+//         res.status(500).json({ message: "Server Error" });
+//       });
+//   });
+// });
 
 module.exports = router;
