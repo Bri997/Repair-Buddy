@@ -8,18 +8,21 @@ const jobsRouter = require("./routes/jobs");
 const { router: imageRouter } = require("./routes/images");
 const tagsRouter = require("./routes/tags");
 const app = express();
+const cors = require("cors");
+
+app.use(cors());
 app.use(express.static("Public"));
 app.use(jsonParser);
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin", "Authorization");
-  if (req.method === "Option") {
-    res.header("Access-Control-Allow-Method", "Put", "Post", "Delete", "Get");
-    return res.status(200).json({});
-  }
-  next();
-});
+// app.use((req, res, next) => {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin", "Authorization");
+//   if (req.method === "Option") {
+//     res.header("Access-Control-Allow-Method", "Put", "Post", "Delete", "Get");
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
 
 app.use("/user", userRouter);
 app.use("/job", jobsRouter);

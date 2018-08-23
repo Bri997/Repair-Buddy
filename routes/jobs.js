@@ -169,3 +169,8 @@ module.exports = router;
 
 //wireframe the front end. Adobe XD
 //finish crudy stuff
+
+//login & sign up
+//jobs view
+//detail job view
+//detail image view
