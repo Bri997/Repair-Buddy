@@ -32,7 +32,7 @@ const fileFilter = function(req, file, callback) {
 const upload = multer({ storage, fileFilter });
 
 const { User } = require("../models/user");
-const { Job } = require("../models/job");
+const Job = require("../models/job");
 const Image = require("../models/image");
 const Tag = require("../models/tag");
 
@@ -65,35 +65,29 @@ router.post(
   auth,
   upload.single("userImage"),
   (req, res) => {
-    // const requiredJobFields = ["jobName"];
-
-    // for (let field of requiredJobFields) {
-    //   if (!(field in req.body)) {
-    //     const message = `Must enter ${field}`;
-    //     return res.status(400).send(message);
-    //   }
-    // }
-
-    Job.findById(req.params._id).then(job => {
-      console.log(Job);
-      return Image.create({
-        url: req.body,
-        date: new Date(),
-        imgDescription: "",
-        tag: "Tag"
-      })
-        .then(image => {
-          image.user = user._id;
-          user.images.push(image._id);
-          return user.save().then(user => {
-            return image.save();
-          });
+    User.findById(req.user._id).then(user => {
+      Job.findById(req.params._id).then(job => {
+        console.log(Job);
+        return Image.create({
+          url: req.file.filename,
+          date: new Date(),
+          imgDescription: req.body.description
         })
-        .then(image => res.status(201).json(image))
-        .catch(err => {
-          console.log(err);
-          res.status(500).json({ message: "Post Problem", err: err });
-        });
+          .then(image => {
+            user.images.push(image._id);
+            return user.save().then(user => {
+              job.images.push(image._id);
+              return job.save().then(job => {
+                return image;
+              });
+            });
+          })
+          .then(image => res.status(201).json(image))
+          .catch(err => {
+            console.log(err);
+            res.status(500).json({ message: "Post Problem", err: err });
+          });
+      });
     });
   }
 );
