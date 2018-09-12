@@ -35,4 +35,5 @@ router.post("/", async (req, res) => {
 router.put("/user/:id", async (req, res) => {
   User.findByIdAndUpdate(req.body);
 });
+
 module.exports = router;

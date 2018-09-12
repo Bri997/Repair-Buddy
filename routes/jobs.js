@@ -50,7 +50,7 @@ router.get("/:id", auth, (req, res) => {
     });
 });
 
-router.post("/", auth, jsonParser, (req, res) => {
+router.post("/", jsonParser, (req, res) => {
   const requiredJobFields = ["jobName"];
 
   for (let field of requiredJobFields) {

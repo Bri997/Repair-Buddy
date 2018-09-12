@@ -7,10 +7,15 @@ const userRouter = require("./routes/users");
 const jobsRouter = require("./routes/jobs");
 const { router: imageRouter } = require("./routes/images");
 const tagsRouter = require("./routes/tags");
+const auth = require("./routes/auth");
 const app = express();
 const cors = require("cors");
 
-app.use(cors());
+app.use(
+  cors({
+    exposedHeaders: ["x-auth-token"]
+  })
+);
 app.use(express.static("Public"));
 app.use(jsonParser);
 
@@ -28,6 +33,7 @@ app.use("/user", userRouter);
 app.use("/job", jobsRouter);
 app.use("/image", imageRouter);
 app.use("/tag", tagsRouter);
+app.use("/login", auth);
 // make upload folder available
 app.use("./uploads", express.static("newuploads"));
 // app.use((req, res, next) => {
