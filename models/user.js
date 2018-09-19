@@ -36,6 +36,16 @@ userSchema.methods.generateAuthToken = function() {
   return token;
 };
 
+userSchema.methods.serialize = function() {
+  return {
+    id: this._id,
+    email: this.email,
+    name: this.name,
+    jobs: this.jobs,
+    token: this.generateAuthToken()
+  };
+};
+
 const User = mongoose.model("User", userSchema);
 console.log("User is here");
 function validateUser(user) {

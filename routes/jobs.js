@@ -50,7 +50,7 @@ router.get("/:id", auth, (req, res) => {
     });
 });
 
-router.post("/", jsonParser, (req, res) => {
+router.post("/", jsonParser, auth, (req, res) => {
   const requiredJobFields = ["jobName"];
 
   for (let field of requiredJobFields) {
@@ -166,11 +166,3 @@ router.use("*", (req, res) => {
   res.status(404).json({ message: "404 Whoops not found try again" });
 });
 module.exports = router;
-
-//wireframe the front end. Adobe XD
-//finish crudy stuff
-
-//login & sign up
-//jobs view
-//detail job view
-//detail image view

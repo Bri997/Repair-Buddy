@@ -92,7 +92,13 @@ router.post(
   }
 );
 
-router.post("/:id/tag", jsonParser, auth, (req, res) => {
+router.get("/:id/tag/", jsonParser, auth, (req, res) => {
+  Image.findById(req.params.id).then(image => {
+    res.json(image.tag);
+  });
+});
+
+router.post("/:id/tag/", jsonParser, auth, (req, res) => {
   Image.findById(req.params.id).then(image => {
     return Tag.create({
       tag: req.body.tag
@@ -111,6 +117,17 @@ router.post("/:id/tag", jsonParser, auth, (req, res) => {
   });
 });
 
+router.delete("/:id/tag/:tagId", jsonParser, auth, (req, res) => {
+  const tagId = Tag.findByIdAndRemove(req.params.tagId);
+
+  const tagToDelete = image.tag.indexOf(tagId);
+
+  image.tag.splice(tagToDelete, 1);
+
+  image.save().then(image => {
+    return res.status(200).json(image);
+  });
+});
 module.exports = { upload, router };
 
 // website.com/user/82109381/job/091312098/images/982347938

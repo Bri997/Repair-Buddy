@@ -21,14 +21,24 @@ router.post("/", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let user = await User.findOne({ email: req.body.email });
+  let user = await User.findOne({ email: req.body.email }).populate({
+    path: "jobs",
+    populate: {
+      path: "images",
+      model: "Image"
+    }
+  });
   if (!user) return res.status(400).send("Invalid email or password.");
 
   const vaildPassword = await bcrypt.compare(req.body.password, user.password);
   if (!vaildPassword) return res.status(400).send("Invalid email or password.");
 
-  const token = jwt.sign({ _id: user._id }, config.get("jwtPrivateKey"));
-  res.send(token);
+  jwt.sign({ _id: user._id }, config.get("jwtPrivateKey"), (error, token) => {
+    user.token = token;
+    res.json(user.serialize());
+  });
+
+  console.log(user.token);
 });
 
 function validate(req) {
