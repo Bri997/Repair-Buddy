@@ -8,7 +8,7 @@ const path = require("path");
 
 const storage = multer.diskStorage({
   destination: function(req, file, callback) {
-    callback(null, "newuploads/");
+    callback(null, "public/newuploads/");
   },
   filename: function(req, file, callback) {
     callback(
@@ -59,6 +59,7 @@ router.get("/:id", auth, (req, res) => {
     });
 });
 
+//i think what's happing is the my localhost/addnewimageform is not getting the jobID
 router.post(
   "/:id",
   jsonParser,
@@ -66,8 +67,8 @@ router.post(
   upload.single("userImage"),
   (req, res) => {
     User.findById(req.user._id).then(user => {
-      Job.findById(req.params._id).then(job => {
-        console.log(Job);
+      Job.findById(req.params.id).then(job => {
+        console.log(req.file);
         return Image.create({
           url: req.file.filename,
           date: new Date(),
@@ -76,6 +77,7 @@ router.post(
           .then(image => {
             user.images.push(image._id);
             return user.save().then(user => {
+              console.log(user.job);
               job.images.push(image._id);
               return job.save().then(job => {
                 return image;

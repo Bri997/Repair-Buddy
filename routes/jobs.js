@@ -134,6 +134,7 @@ router.put("/:id", jsonParser, auth, (req, res) => {
       res.status(500).sjon({ message: "server Error" });
     });
 });
+
 router.delete("/:id", auth, (req, res) => {
   Job.findByIdAndRemove(req.params.id)
     .then(job => res.status(204).json({ message: "Job Deleted" }))

@@ -37,8 +37,6 @@ router.post("/", async (req, res) => {
     user.token = token;
     res.json(user.serialize());
   });
-
-  console.log(user.token);
 });
 
 function validate(req) {

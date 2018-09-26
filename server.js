@@ -16,7 +16,7 @@ app.use(
     exposedHeaders: ["x-auth-token"]
   })
 );
-app.use(express.static("Public"));
+app.use(express.static("public"));
 app.use(jsonParser);
 
 // app.use((req, res, next) => {
