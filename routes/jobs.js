@@ -16,7 +16,10 @@ router.get("/", auth, (req, res) => {
       path: "jobs",
       populate: [
         {
-          path: "images"
+          path: "images",
+          populate: {
+            path: "tag"
+          }
         },
         {
           path: "tags"

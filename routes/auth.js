@@ -25,7 +25,10 @@ router.post("/", async (req, res) => {
     path: "jobs",
     populate: {
       path: "images",
-      model: "Image"
+      model: "Image",
+      populate: {
+        path: "tag"
+      }
     }
   });
   if (!user) return res.status(400).send("Invalid email or password.");
