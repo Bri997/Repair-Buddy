@@ -117,7 +117,7 @@ router.post(
 router.put("/:id", jsonParser, auth, (req, res) => {
   if (!(req.params.id && req.body._id && req.params.id === req.body._id)) {
     const message =
-      `Request path id (${req.params.id}) and request body id ` +
+      `Request path id (${req.params._id}) and request body id ` +
       `(${req.body.id}) must match`;
     console.error(message);
     return res.status(400).json({ message: message });
@@ -139,11 +139,11 @@ router.put("/:id", jsonParser, auth, (req, res) => {
 });
 
 router.delete("/:id", auth, (req, res) => {
-  Job.findByIdAndRemove(req.params.id)
+  Job.findByIdAndRemove(req.params._id)
     .then(job => res.status(204).json({ message: "Job Deleted" }))
     .catch(err => {
       console.log(err);
-      res.status(500).json({ message: "Serve Error" });
+      res.status(500).json({ message: "Delete Job Server Error" });
     });
 });
 
@@ -165,7 +165,16 @@ router.post("/:id/tag", auth, (req, res) => {
       });
   });
 });
-
+router.get("/:id/tag/", jsonParser, auth, (req, res) => {
+  Image.findById(req.params.id)
+    .then(image => {
+      res.json(tag);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Tag err job side" });
+    });
+});
 router.use("*", (req, res) => {
   res.status(404).json({ message: "404 Whoops not found try again" });
 });

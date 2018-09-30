@@ -94,14 +94,25 @@ router.post(
   }
 );
 
+router.delete("/:id", auth, (req, res) => {
+  Image.findByIdAndRemove(req.params._id).then(image =>
+    res.status(204).json({ message: "Image Deleted" })
+  );
+});
+
 router.get("/:id/tag/", jsonParser, auth, (req, res) => {
-  Image.findById(req.params.id).then(image => {
-    res.json(image.tag);
-  });
+  Image.findById(req.params.id)
+    .then(image => {
+      res.json(tag);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Tag err" });
+    });
 });
 
 router.post("/:id/tag/", jsonParser, auth, (req, res) => {
-  Image.findById(req.params.id).then(image => {
+  Image.findById(req.params._id).then(image => {
     return Tag.create({
       tag: req.body.tag
     })
@@ -126,9 +137,15 @@ router.delete("/:id/tag/:tagId", jsonParser, auth, (req, res) => {
 
   image.tag.splice(tagToDelete, 1);
 
-  image.save().then(image => {
-    return res.status(200).json(image);
-  });
+  image
+    .save()
+    .then(image => {
+      return res.status(200).json(image);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json({ message: "Tag delete problem" });
+    });
 });
 module.exports = { upload, router };
 
