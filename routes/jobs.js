@@ -139,7 +139,7 @@ router.put("/:id", jsonParser, auth, (req, res) => {
 });
 
 router.delete("/:id", auth, (req, res) => {
-  Job.findByIdAndRemove(req.params._id)
+  Job.findByIdAndRemove(req.params.id)
     .then(job => res.status(204).json({ message: "Job Deleted" }))
     .catch(err => {
       console.log(err);

@@ -95,7 +95,7 @@ router.post(
 );
 
 router.delete("/:id", auth, (req, res) => {
-  Image.findByIdAndRemove(req.params._id).then(image =>
+  Image.findByIdAndRemove(req.params.id).then(image =>
     res.status(204).json({ message: "Image Deleted" })
   );
 });
@@ -112,7 +112,7 @@ router.get("/:id/tag/", jsonParser, auth, (req, res) => {
 });
 
 router.post("/:id/tag/", jsonParser, auth, (req, res) => {
-  Image.findById(req.params._id).then(image => {
+  Image.findById(req.params.id).then(image => {
     return Tag.create({
       tag: req.body.tag
     })
