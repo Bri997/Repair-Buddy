@@ -130,9 +130,11 @@ router.post("/:id/tag/", jsonParser, auth, (req, res) => {
   });
 });
 
-router.delete("/:id/tag/:tagId", jsonParser, auth, (req, res) => {
+router.delete("/:id/tag/:tagId", jsonParser, auth, async (req, res) => {
+  let image = await Image.findById(req.params.id);
   const tagId = Tag.findByIdAndRemove(req.params.tagId);
 
+  console.log(image.tag);
   const tagToDelete = image.tag.indexOf(tagId);
 
   image.tag.splice(tagToDelete, 1);
