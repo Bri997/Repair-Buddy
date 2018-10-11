@@ -5,6 +5,7 @@ const jsonParser = bodyParser.json();
 const auth = require("../middleware/auth");
 const multer = require("multer");
 const path = require("path");
+const fs = require("fs");
 
 const storage = multer.diskStorage({
   destination: function(req, file, callback) {
@@ -94,7 +95,21 @@ router.post(
   }
 );
 
-router.delete("/:id", auth, (req, res) => {
+router.delete("/:id/:jobId", auth, async (req, res) => {
+  let image = await Image.findById(req.params.id);
+  let job = await Job.findById(req.params.jobId);
+
+  let imageToDelete = image.url;
+  fs.unlink(`public/newuploads/${imageToDelete}`, err => {
+    if (err) throw err;
+    console.log("path/file.txt was deleted");
+  });
+  console.log(`${job} check this`);
+  let indexofImage = job.images.findIndex(i => i === req.params.jobId);
+
+  job.images.splice(indexofImage, 1);
+  await job.save();
+
   Image.findByIdAndRemove(req.params.id).then(image =>
     res.status(204).json({ message: "Image Deleted" })
   );
