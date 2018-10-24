@@ -69,7 +69,6 @@ router.post(
   (req, res) => {
     User.findById(req.user._id).then(user => {
       Job.findById(req.params.id).then(job => {
-        console.log(req.file);
         return Image.create({
           url: req.file.filename,
           date: new Date(),
@@ -78,7 +77,6 @@ router.post(
           .then(image => {
             user.images.push(image._id);
             return user.save().then(user => {
-              console.log(user.job);
               job.images.push(image._id);
               return job.save().then(job => {
                 return image;
@@ -102,9 +100,8 @@ router.delete("/:id/:jobId", auth, async (req, res) => {
   let imageToDelete = image.url;
   fs.unlink(`public/newuploads/${imageToDelete}`, err => {
     if (err) throw err;
-    console.log("path/file.txt was deleted");
   });
-  console.log(`${job} check this`);
+
   let indexofImage = job.images.findIndex(i => i === req.params.jobId);
 
   job.images.splice(indexofImage, 1);
@@ -149,7 +146,6 @@ router.delete("/:id/tag/:tagId", jsonParser, auth, async (req, res) => {
   let image = await Image.findById(req.params.id);
   const tagId = Tag.findByIdAndRemove(req.params.tagId);
 
-  console.log(image.tag);
   const tagToDelete = image.tag.indexOf(tagId);
 
   image.tag.splice(tagToDelete, 1);
