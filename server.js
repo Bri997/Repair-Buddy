@@ -40,7 +40,6 @@ function runServer(databaseUrl, port = PORT) {
         }
         server = app
           .listen(port, () => {
-            console.log(`App is ready on port ${port}`);
             resolve();
           })
           .on("error", err => {
@@ -55,7 +54,6 @@ function runServer(databaseUrl, port = PORT) {
 function closeServer() {
   return mongoose.disconnect().then(() => {
     return new Promise((resolve, reject) => {
-      console.log("Closing your favorite server");
       server.close(err => {
         if (err) {
           return reject(err);

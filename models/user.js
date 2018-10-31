@@ -47,7 +47,7 @@ userSchema.methods.serialize = function() {
 };
 
 const User = mongoose.model("User", userSchema);
-console.log("User is here");
+
 function validateUser(user) {
   const schema = {
     name: Joi.string()
