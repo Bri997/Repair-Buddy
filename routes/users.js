@@ -31,7 +31,6 @@ router.post("/", async (req, res) => {
   res.header("x-auth-token", token).send(_.pick(user, ["name", "email"]));
 });
 
-//json parser?
 router.put("/user/:id", async (req, res) => {
   User.findByIdAndUpdate(req.body);
 });

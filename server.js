@@ -24,7 +24,6 @@ app.use("/job", jobsRouter);
 app.use("/image", imageRouter);
 app.use("/tag", tagsRouter);
 app.use("/login", auth);
-app.use("./uploads", express.static("newuploads"));
 
 mongoose.Promise = global.Promise;
 
