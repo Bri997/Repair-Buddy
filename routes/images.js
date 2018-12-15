@@ -6,7 +6,43 @@ const auth = require("../middleware/auth");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
+const aws = require("aws-sdk");
+const multerS3 = require("multer-s3");
+const config = require("../config");
 
+const fileFilter = function(req, file, callback) {
+  if (
+    file.mimetype === "image/jpeg" ||
+    file.mimetype === "image/png" ||
+    file.minetype === "image/jpg"
+  ) {
+    callback(null, true);
+  } else {
+    callback(null, false);
+  }
+};
+
+aws.config.update({
+  secretAccessKey: config.AWS_SECRET_ACCESS,
+  accessKeyId: config.AWS_ACCESS_KEY,
+  region: "us-east-1"
+});
+const s3 = new aws.S3();
+
+const upload = multer({
+  fileFilter,
+  storage: multerS3({
+    s3: s3,
+    bucket: "repairbuddy-images",
+    acl: "public-read",
+    metadata: function(req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function(req, file, cb) {
+      cb(null, Date.now().toString() + file.originalname);
+    }
+  })
+});
 const storage = multer.diskStorage({
   destination: function(req, file, callback) {
     callback(null, "public/newuploads/");
@@ -19,18 +55,8 @@ const storage = multer.diskStorage({
     );
   }
 });
-const fileFilter = function(req, file, callback) {
-  if (
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/png" ||
-    file.minetype === "image/jpg"
-  ) {
-    callback(null, true);
-  } else {
-    callback(null, false);
-  }
-};
-const upload = multer({ storage, fileFilter });
+
+// const upload = multer({ storage, fileFilter });
 
 const { User } = require("../models/user");
 const Job = require("../models/job");
@@ -60,7 +86,6 @@ router.get("/:id", auth, (req, res) => {
     });
 });
 
-//i think what's happing is the my localhost/addnewimageform is not getting the jobID
 router.post(
   "/:id",
   jsonParser,
@@ -70,7 +95,7 @@ router.post(
     User.findById(req.user._id).then(user => {
       Job.findById(req.params.id).then(job => {
         return Image.create({
-          url: req.file.filename,
+          url: req.file.location,
           date: new Date(),
           imgDescription: req.body.description
         })
@@ -161,5 +186,3 @@ router.delete("/:id/tag/:tagId", jsonParser, auth, async (req, res) => {
     });
 });
 module.exports = { upload, router };
-
-// website.com/user/82109381/job/091312098/images/982347938
