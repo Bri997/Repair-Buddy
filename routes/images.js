@@ -34,29 +34,15 @@ const upload = multer({
   storage: multerS3({
     s3: s3,
     bucket: "repairbuddy-images",
-    acl: "public-read",
+    acl: "public-read-write",
     metadata: function(req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
     key: function(req, file, cb) {
-      cb(null, Date.now().toString() + file.originalname);
+      cb(null, Date.now().toString() + file.originalname.toLowerCase());
     }
   })
 });
-const storage = multer.diskStorage({
-  destination: function(req, file, callback) {
-    callback(null, "public/newuploads/");
-  },
-  filename: function(req, file, callback) {
-    callback(
-      null,
-      new Date().toISOString().replace(/:/g, "-") +
-        path.extname(file.originalname)
-    );
-  }
-});
-
-// const upload = multer({ storage, fileFilter });
 
 const { User } = require("../models/user");
 const Job = require("../models/job");
@@ -122,9 +108,20 @@ router.delete("/:id/:jobId", auth, async (req, res) => {
   let image = await Image.findById(req.params.id);
   let job = await Job.findById(req.params.jobId);
 
-  let imageToDelete = image.url;
-  fs.unlink(`public/newuploads/${imageToDelete}`, err => {
-    if (err) throw err;
+  let imageToDelete = image.url.replace(
+    "https://repairbuddy-images.s3.amazonaws.com/",
+    ""
+  );
+
+  // let item = req.body;
+  let params = { Bucket: "repairbuddy-images", Delete: { Key: imageToDelete } };
+  await s3.deleteObjects(params, function(err, data) {
+    console.log("here");
+    if (err) {
+      return res.send({ error: err });
+    } else {
+      console.log(data);
+    }
   });
 
   let indexofImage = job.images.findIndex(i => i === req.params.jobId);

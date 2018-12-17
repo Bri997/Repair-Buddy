@@ -19,5 +19,3 @@ const imageSchema = new mongoose.Schema({
 const Image = mongoose.model("Image", imageSchema, "Image");
 
 module.exports = Image;
-
-//http://localhost:8080/user/id/job/id/images/idIMG
