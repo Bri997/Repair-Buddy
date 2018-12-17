@@ -113,10 +113,8 @@ router.delete("/:id/:jobId", auth, async (req, res) => {
     ""
   );
 
-  // let item = req.body;
   let params = { Bucket: "repairbuddy-images", Delete: { Key: imageToDelete } };
   await s3.deleteObjects(params, function(err, data) {
-    console.log("here");
     if (err) {
       return res.send({ error: err });
     } else {
