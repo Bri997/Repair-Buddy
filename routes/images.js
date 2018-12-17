@@ -23,8 +23,8 @@ const fileFilter = function(req, file, callback) {
 };
 
 aws.config.update({
-  secretAccessKey: config.AWS_SECRET_ACCESS,
-  accessKeyId: config.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.S3_SECRET,
+  accessKeyId: process.env.S3_KEY,
   region: "us-east-1"
 });
 const s3 = new aws.S3();
